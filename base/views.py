@@ -11,6 +11,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+
 class CustomLoginView(LoginView):
     template_name = 'base/login.html'
     fields = '__all__'
@@ -38,8 +39,7 @@ class RegisterPage(FormView):
         return super(RegisterPage, self).get(*args, **kwargs)
 
 
-
-class TasklList(LoginRequiredMixin, ListView):
+class TaskList(LoginRequiredMixin, ListView):
     model = Task
     context_object_name = 'tasks'
 
@@ -51,7 +51,7 @@ class TasklList(LoginRequiredMixin, ListView):
         search_input = self.request.GET.get('search-area') or ''
         if search_input:
             context['tasks'] = context['tasks'].filter(
-                title__icontains=search_input)
+                title__startswith=search_input)
 
         context['search_input'] = search_input
         return context
@@ -71,6 +71,7 @@ class TaskCreate(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instant.user = self.request.user
         return super(TaskCreate, self).form_valid(form)
+
 
 class TaskUpdate(LoginRequiredMixin, UpdateView):
     model = Task
